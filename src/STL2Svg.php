@@ -245,8 +245,8 @@ class STL2Svg {
         $result = "";
 
         for ($i = count($layers) - 1; $i > 0; $i--) {
+            $result .= "<g id=\"layer" . $i . "\" z=\"" . ($layers[$i][0]->getZ()) . "\">\n";
             $layers[$i] = $this->sortPolygonCoordinates($layers[$i]);
-            $result .= "<g id=\"layer" . $i . "\" z=\"" . ($i / $this->getPrecision()) . "\">\n";
             $coordinates = array();
             foreach ($layers[$i] as $dot) {
                 $coordinates[] = ($addX + $dot["x"]) . "," . ($addY + $dot["y"]);
