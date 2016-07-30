@@ -97,6 +97,7 @@ class STL2Svg {
 
         $objectsSvg = array();
         $objectsLayers = array();
+        $layersNames = array();
 
         foreach ($objects as $object) {
             $lines = $this->extractLinesFromStl($object);
@@ -123,6 +124,7 @@ class STL2Svg {
                 }
             }
             $objectsLayers[] = $layers;
+            $layersNames[] = $object->getSolidName();
         }
 
         $lowestX = 0;
@@ -153,8 +155,8 @@ class STL2Svg {
         if ($lowestX < 0) $addX = -1 * $lowestX;
         if ($lowestY < 0) $addY = -1 * $lowestY;
 
-        foreach ($objectsLayers as $layers) {
-            $objectsSvg[] = $this->createObjectSvg($layers, $addX, $addY, $lowestX, $lowestY, $highestX, $highestY);
+        foreach ($objectsLayers as $key => $layers) {
+            $objectsSvg[] = $this->createObjectSvg($layers, $addX, $addY, $lowestX, $lowestY, $highestX, $highestY, $layersNames[$key]);
         }
 
         return $this->createSvg($objectsSvg);
@@ -240,7 +242,7 @@ class STL2Svg {
      * @param float $highestY
      * @return array
      */
-    private function createObjectSvg(array $layers, float $addX, float $addY, float $lowestX, float $lowestY, float $highestX, float $highestY) : array
+    private function createObjectSvg(array $layers, float $addX, float $addY, float $lowestX, float $lowestY, float $highestX, float $highestY, string $name) : array
     {
         $result = "";
 
@@ -251,7 +253,7 @@ class STL2Svg {
             foreach ($layers[$i] as $dot) {
                 $coordinates[] = ($addX + $dot["x"]) . "," . ($addY + $dot["y"]);
             }
-            $result .= "<polygon type=\"contour\" points=\"" . implode(" ", $coordinates) . " " . $coordinates[0] . "\" style=\"fill:lime;stroke:purple;stroke-width:1\" />";
+            $result .= "<polygon name=\"" . $name . "\" type=\"contour\" points=\"" . implode(" ", $coordinates) . " " . $coordinates[0] . "\" style=\"fill:lime;stroke:purple;stroke-width:1\" />";
             $result .= "</g>\n";
         }
 
